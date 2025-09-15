@@ -1,0 +1,41 @@
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(124, 124, 124, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: rgb(31, 31, 31);
+    padding: 1rem;
+    border-radius: .5rem;
+    min-width: 300px;
+}
+
+.modal header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
+.modal h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+
+
+@media (prefers-color-scheme: light) {
+    .modal {
+        background: white;
+        color: black;
+    }
+
+    .modal-backdrop {
+        background: rgba(63, 63, 63, 0.4);
+    }
+
+}

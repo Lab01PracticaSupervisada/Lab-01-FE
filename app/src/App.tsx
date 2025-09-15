@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import type { Curso } from "./types/Curso";
+import CursosTable from "./components/CursosTable";
+import Modal from "./components/Modal";
 
-function App() {
-  const [count, setCount] = useState(0)
+const API_URL = "http://localhost:3000"; 
+
+export default function App() {
+  const [cursos, setCursos] = useState<Curso[]>([]);
+  const [loading, setLoading] = useState(true);
+
+
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const [cursoActual, setCursoActual] = useState<Curso | null>(null);
+
+  const fetchCursos = async () => {
+    setLoading(true);
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    setCursos(data);
+    setLoading(false);
+  };
+
+  async function handleDelete() {
+    if (!cursoActual) return;
+    await fetch(`http://localhost:3000/${cursoActual.id}`, { method: "DELETE" });
+    setOpenDelete(false);
+    setCursoActual(null);
+    fetchCursos();
+  }
+
+  useEffect(() => {
+    fetchCursos();
+  }, []);
+
+  if (loading) return <p>Cargando...</p>;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="container">
+      <h1>Lista de Cursos</h1>
+      <CursosTable 
+        cursos={cursos}
+          onDelete={(id) => {
+          const curso = cursos.find(c => c.id === id)!;
+          setCursoActual(curso);
+          setOpenDelete(true);
+        }}
+      />
 
-export default App
+      <Modal open={openDelete} title="Eliminar Curso">
+        <p>¿Esta seguro que desea eliminar el curso <strong>{cursoActual?.nombre}</strong>?</p>
+        <div className="modal-buttons">
+          <button className="modal-delete-btn" onClick={handleDelete}>Sí, eliminar</button>
+          <button className="modal-cancel-btn" onClick={() => setOpenDelete(false)}>Cancelar</button>
+        </div>
+      </Modal>
+    </div>
+  );
+}

@@ -13,18 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
-  margin: 0;
-  display: flex;
+  display: grid;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -53,6 +43,87 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-left: none;
+  border-right: none;
+}
+
+th:nth-last-child(2),
+td:nth-last-child(2) {
+  text-align: center;
+}
+
+th:last-child, td:last-child {
+  text-align: center;
+}
+
+.acciones {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn-editar {
+  background-color: #6d6d6d; 
+  color: white;
+  margin-right: 5px;
+}
+
+.btn-eliminar {
+  background-color: #9c4e48; 
+  color: white;
+}
+
+.btn-agregar {
+  background-color: #4e79a7; 
+  color: white;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end; 
+  gap: 10px; 
+  margin-top: 20px;
+}
+
+.modal-delete-btn {
+  background-color: #9c4e48; 
+  color: white;
+  margin-right: 5px;
+}
+
+.modal-cancel-btn {
+  background-color: #6d6d6d; 
+  color: white;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {
