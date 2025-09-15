@@ -11,8 +11,9 @@ export default function App() {
 
   const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
-  const [cursoActual, setCursoActual] = useState<Curso | null>(null);
+  const [cursoSeleccionado, setCursoActual] = useState<Curso | null>(null);
 
   const fetchCursos = async () => {
     setLoading(true);
@@ -32,7 +33,7 @@ export default function App() {
       creditos: Number(formData.get("creditos")),
     };
 
-    await fetch("http://localhost:3000/", {
+    await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(nuevo),
@@ -43,34 +44,64 @@ export default function App() {
   }
 
   async function handleDelete() {
-    if (!cursoActual) return;
-    await fetch(`http://localhost:3000/${cursoActual.id}`, { method: "DELETE" });
+    if (!cursoSeleccionado) return;
+    await fetch(`${API_URL}/${cursoSeleccionado.id}`, { method: "DELETE" });
     setOpenDelete(false);
     setCursoActual(null);
     fetchCursos();
+  }
+
+  async function handleEdit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!cursoSeleccionado) return;
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const actualizado = {
+      sigla: formData.get("sigla"),
+      nombre: formData.get("nombre"),
+      creditos: Number(formData.get("creditos")),
+    };
+
+    await fetch(`${API_URL}/${cursoSeleccionado.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(actualizado),
+    });
+    
+    setOpenEdit(false);
+    setCursoActual(null);
+    fetchCursos();
+    form.reset();
   }
 
   useEffect(() => {
     fetchCursos();
   }, []);
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) return <p>Cargando cursos...</p>;
 
   return (
     <div className="container">
-      <h1>Lista de Cursos</h1>
-      <button className="btn-crear" onClick={() => setOpenCreate(true)}>Crear Curso</button>
+      <div className="cursos-header">
+        <h1>Lista de Cursos</h1>
+        <button className="btn-crear" onClick={() => setOpenCreate(true)}>Crear Curso</button>
+      </div>
       <CursosTable 
         cursos={cursos}
-          onDelete={(id) => {
+        onDelete={(id) => {
           const curso = cursos.find(c => c.id === id)!;
           setCursoActual(curso);
           setOpenDelete(true);
         }}
+        onEdit={(id) => {
+          const curso = cursos.find(c => c.id === id)!;
+          setCursoActual(curso);
+          setOpenEdit(true);
+        }}
       />
 
       <Modal open={openDelete} title="Eliminar Curso">
-        <p>¿Está seguro que desea eliminar el curso <strong>{cursoActual?.nombre}</strong>?</p>
+        <p>¿Está seguro que desea eliminar el curso <strong>{cursoSeleccionado?.nombre}</strong>?</p>
         <div className="modal-buttons">
           <button className="modal-delete-btn" onClick={handleDelete}>Sí, eliminar</button>
           <button className="modal-cancel-btn" onClick={() => setOpenDelete(false)}>Cancelar</button>
@@ -87,6 +118,20 @@ export default function App() {
             <button className="modal-cancel-btn" onClick={() => setOpenCreate(false)}>Cancelar</button>
           </div>
         </form>
+      </Modal>
+
+      <Modal open={openEdit} title="Editar Curso">
+        {cursoSeleccionado && (
+          <form onSubmit={handleEdit}>
+            <input name="sigla" defaultValue={cursoSeleccionado.sigla} required />
+            <input name="nombre" defaultValue={cursoSeleccionado.nombre} required />
+            <input name="creditos" type="number" min={0} defaultValue={cursoSeleccionado.creditos} required />
+            <div className="modal-buttons">
+              <button className="btn-crear" type="submit">Guardar</button>
+              <button className="modal-cancel-btn" onClick={() => setOpenCreate(false)}>Cancelar</button>
+            </div>
+          </form>
+        )}
       </Modal>
     </div>
   );

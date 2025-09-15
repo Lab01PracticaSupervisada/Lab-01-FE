@@ -3,9 +3,10 @@ import type { Curso } from "../types/Curso";
 interface CursosTableProps {
   cursos: Curso[];
   onDelete: (id: number) => void;
+  onEdit: (id: number) => void;
 }
 
-export default function CursosTable({ cursos, onDelete }: CursosTableProps) {
+export default function CursosTable({ cursos, onDelete, onEdit }: CursosTableProps) {
   if (cursos.length === 0) {
     return <p>No hay cursos disponibles.</p>;
   }
@@ -27,7 +28,7 @@ export default function CursosTable({ cursos, onDelete }: CursosTableProps) {
             <td>{c.nombre}</td>
             <td>{c.creditos}</td>
             <td className="acciones">
-                <button className="btn-editar">Editar</button>
+                <button className="btn-editar" onClick={() => onEdit(c.id)}>Editar</button>
                 <button className="btn-eliminar" onClick={() => onDelete(c.id)} >Eliminar</button>
             </td>
           </tr>

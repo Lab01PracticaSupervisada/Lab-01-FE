@@ -21,7 +21,7 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2.5rem;
   line-height: 1.1;
 }
 
@@ -37,7 +37,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #ffffff;
 }
 button:focus,
 button:focus-visible {
@@ -133,6 +133,13 @@ th:last-child, td:last-child {
 .modal-cancel-btn {
   background-color: #6d6d6d; 
   color: white;
+}
+
+.cursos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 
