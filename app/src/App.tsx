@@ -9,7 +9,7 @@ export default function App() {
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
 
-
+  const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
   const [cursoActual, setCursoActual] = useState<Curso | null>(null);
@@ -21,6 +21,26 @@ export default function App() {
     setCursos(data);
     setLoading(false);
   };
+
+  async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const nuevo = {
+      sigla: formData.get("sigla"),
+      nombre: formData.get("nombre"),
+      creditos: Number(formData.get("creditos")),
+    };
+
+    await fetch("http://localhost:3000/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevo),
+    });
+    setOpenCreate(false);
+    fetchCursos();
+    form.reset();
+  }
 
   async function handleDelete() {
     if (!cursoActual) return;
@@ -39,6 +59,7 @@ export default function App() {
   return (
     <div className="container">
       <h1>Lista de Cursos</h1>
+      <button className="btn-crear" onClick={() => setOpenCreate(true)}>Crear Curso</button>
       <CursosTable 
         cursos={cursos}
           onDelete={(id) => {
@@ -49,11 +70,23 @@ export default function App() {
       />
 
       <Modal open={openDelete} title="Eliminar Curso">
-        <p>¿Esta seguro que desea eliminar el curso <strong>{cursoActual?.nombre}</strong>?</p>
+        <p>¿Está seguro que desea eliminar el curso <strong>{cursoActual?.nombre}</strong>?</p>
         <div className="modal-buttons">
           <button className="modal-delete-btn" onClick={handleDelete}>Sí, eliminar</button>
           <button className="modal-cancel-btn" onClick={() => setOpenDelete(false)}>Cancelar</button>
         </div>
+      </Modal>
+
+      <Modal open={openCreate} title="Crear Curso">
+        <form onSubmit={handleCreate}>
+          <input name="sigla" placeholder="Sigla" required />
+          <input name="nombre" placeholder="Nombre" required />
+          <input name="creditos" type="number" min={0} placeholder="Créditos" required />
+          <div className="modal-buttons">
+            <button className="btn-crear" type="submit">Crear</button>
+            <button className="modal-cancel-btn" onClick={() => setOpenCreate(false)}>Cancelar</button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
